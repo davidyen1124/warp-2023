@@ -1,1 +1,34 @@
 // place files you want to import through the `$lib` alias in this folder.
+
+export type Position = {
+	x: number;
+	y: number;
+};
+
+export enum ItemType {
+	DEBRIS = 'Debris',
+	VALUABLE = 'Valuable'
+}
+
+export type Item = {
+	id: string;
+	type: ItemType;
+	position: Position;
+	cleaned: boolean;
+};
+
+export type Player = {
+	position: Position;
+	heading: number;
+	collected: Item[];
+};
+
+export const defaultPlayer: Player = {
+	position: { x: 0, y: 0 },
+	heading: 0,
+	collected: []
+};
+
+export type Dustbin = {
+	position: Position;
+};
