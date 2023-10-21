@@ -4,7 +4,13 @@
 
 	import Player from './Player.svelte';
 	import { defaultPlayer } from '$lib';
+
+	const handleKeydown = (e: any) => {
+		console.log(e);
+	};
 </script>
+
+<svelte:window on:keydown={handleKeydown} />
 
 <T.PerspectiveCamera makeDefault position={[-10, 10, 10]} fov={15}>
 	<OrbitControls autoRotate enableZoom={false} enableDamping autoRotateSpeed={0.5} target.y={1.5} />
