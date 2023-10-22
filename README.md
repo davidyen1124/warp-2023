@@ -1,4 +1,4 @@
-# Warp 2023 hackathon submission
+# [Warp 2023](https://threlte.xyz/hackathon) hackathon submission
 
 - _Title_: roomba time!
 - _Track_: Wow!
@@ -8,3 +8,10 @@
 - _Preview link_: [https://roomba-time.netlify.app/](https://roomba-time.netlify.app/)
 
 - [3D assets source](https://www.turbosquid.com/3d-models/furniture-free-3d-model-2098569)
+
+## documentation
+
+<div>
+<img src="./doc/demo-img.png"/>
+<img src="./doc/demo-playthrough.gif"/>
+</div>
