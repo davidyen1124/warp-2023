@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { T } from '@threlte/core';
-	import { ContactShadows, Float, Grid, OrbitControls } from '@threlte/extras';
+	import { Grid, OrbitControls } from '@threlte/extras';
 
 	import Player from './Player.svelte';
 
@@ -14,6 +14,34 @@
 		PlaneGeometry
 	} from 'three';
 	import Obstacle from './Obstacle.svelte';
+
+	import { socket } from '$lib/socket-client';
+	import { onMount } from 'svelte';
+
+	let status: string;
+	let clientData: any = {};
+	let serverData: any = {};
+	onMount(() => {
+		// update status when server tells us whether they approve or reject our request to join a room
+		socket.on('connection-approve', function (data) {
+			status = 'approve';
+			clientData.id = socket.id;
+			console.log('approved');
+		});
+		socket.on('connection-reject', function (data) {
+			status = 'reject';
+			console.log('rejected');
+		});
+
+		// update our copy everytime the server sends us an update
+		socket.on('server-update', function (data) {
+			serverData = data;
+		});
+
+		// socket.on('eventFromServer', (e) => {
+		// 	console.log(e);
+		// });
+	});
 
 	// obstacles
 	const SPAWN_RANGE = 30;
@@ -108,7 +136,7 @@
 
 <T.PerspectiveCamera
 	makeDefault
-	position={[player.position.x - 10, 20, player.position.y + 10]}
+	position={[player.position.x - 10, 15, player.position.y + 10]}
 	fov={20}
 	zoom={0.4}
 >
@@ -122,7 +150,6 @@
 </T.PerspectiveCamera>
 
 <T.DirectionalLight intensity={0.8} position.x={5} position.y={10} />
-<!-- <T.DirectionalLight intensity={100} position.x={5} position.y={10} /> -->
 <T.AmbientLight intensity={0.8} />
 
 <Grid
@@ -134,13 +161,6 @@
 	cellSize={3}
 	infiniteGrid
 />
-
-<!-- <T.Mesh rotation={[-Math.PI / 2, 0, 0]} scale={300} receiveShadow>
-	<T.PlaneGeometry args={[1, 1]} />
-	<T.MeshStandardMaterial color={1} />
-</T.Mesh> -->
-
-<ContactShadows scale={10} blur={2} far={2.5} opacity={0.5} />
 
 <Player props={player} />
 

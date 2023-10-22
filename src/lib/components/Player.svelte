@@ -17,10 +17,6 @@
 		<T.CylinderGeometry args={[0.5, 0.5, 0.1]} />
 		<T.MeshStandardMaterial color={[0.05, 0.05, 0.05]} />
 	</T.Mesh>
-	<!-- <T.Mesh position={[0.6, 0, 0]}>
-		<T.BoxGeometry args={[1, 0.4, 1]} />
-		<T.MeshStandardMaterial color={1} opacity={0.5} transparent />
-	</T.Mesh> -->
 </T.Group>
 
 <CustomRenderer selectedMesh={outlinedMesh} />

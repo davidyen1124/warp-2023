@@ -17,58 +17,48 @@ export const webSocketServer = {
 
 		const io = new Server(server.httpServer);
 
+		let numPlayers = 0;
 		let serverData: ServerState = {
 			players: {},
 			items: {}
 		};
 
 		io.on('connection', (socket) => {
-			socket.emit('eventFromServer', 'Hello, World 👋');
-
-			// // "socket" now refers to this particular new player's connection
-
 			console.log('new connection: ' + socket.id);
 
-			// // if there're too many players, reject player's request to join
-			// if (numPlayers >= MAX_PLAYERS) {
-			// 	socket.emit('connection-reject');
-			// 	return;
-			// }
-			// numPlayers++;
+			if (numPlayers >= MAX_PLAYERS) {
+				socket.emit('connection-reject');
+				return;
+			} else {
+				numPlayers++;
+				socket.emit('connection-approve');
+			}
 
-			// // ok you're in
-			// socket.emit('connection-approve');
+			socket.on('client-update', function (data) {
+				serverData.players[socket.id] = data;
+				console.log(serverData);
+			});
 
-			socket.on('eventFromClient', (e) => console.log('from client', e));
+			let timer = setInterval(function () {
+				var others: ServerState = {
+					players: {},
+					items: {}
+				};
+				for (var k in serverData) {
+					if (k != socket.id) {
+						others.players[k] = serverData.players[k];
+					}
+				}
+				socket.emit('server-update', serverData);
+			}, 15);
 
-			// what to do when client sends us a message titled 'client-update'
-			// socket.on('client-update', function (data) {
-			// 	serverData[socket.id] = data;
-			// 	console.log(serverData);
-			// });
-
-			// // every couple milliseconds we send to this client
-			// // the data of everybody else
-
-			// // setInterval(f,t) = run function f every t milliseconds
-
-			// let timer = setInterval(function () {
-			// 	var others = {};
-			// 	for (var k in serverData) {
-			// 		if (k != socket.id) {
-			// 			others[k] = serverData[k];
-			// 		}
-			// 	}
-			// 	socket.emit('server-update', serverData);
-			// }, 15);
-
-			// //   // the client disconnected, let's wipe up after them
-			// socket.on('disconnect', function () {
-			// 	clearInterval(timer); // cancel the scheduled updates we set up earlier
-			// 	delete serverData[socket.id];
-			// 	console.log(socket.id + ' disconnected');
-			// 	numPlayers--;
-			// });
+			//   // the client disconnected, let's wipe up after them
+			socket.on('disconnect', function () {
+				clearInterval(timer); // cancel the scheduled updates we set up earlier
+				delete serverData.players[socket.id];
+				console.log(socket.id + ' disconnected');
+				numPlayers--;
+			});
 		});
 	}
 };
