@@ -4,8 +4,8 @@
 
 	import Player from './Player.svelte';
 
-	import { ItemType, defaultPlayer } from '$lib';
-	import { randFloat } from 'three/src/math/MathUtils.js';
+	import { ItemType, defaultPlayer, type ItemProps, type ObstacleProps } from '$lib';
+	import { randFloat, randInt } from 'three/src/math/MathUtils.js';
 	import Item from './Item.svelte';
 	import {
 		MeshStandardMaterial,
@@ -13,19 +13,37 @@
 		PerspectiveCamera,
 		PlaneGeometry
 	} from 'three';
-	import Threlte from './models/threlte.svelte';
+	import Obstacle from './Obstacle.svelte';
 
-	const RANGE = 30;
+	// obstacles
+	const SPAWN_RANGE = 30;
+	const OBSTACLE_AMOUNT = 30;
+
+	let obstacles: ObstacleProps[] = [];
+	for (let i = 0; i < OBSTACLE_AMOUNT; i++) {
+		obstacles.push({
+			position: {
+				x: randFloat(-SPAWN_RANGE, SPAWN_RANGE),
+				y: randFloat(-SPAWN_RANGE, SPAWN_RANGE)
+			},
+			type: randInt(0, 12)
+		});
+	}
+
+	// items
 	const AMOUNT = 1000;
 
 	const ROTATE_AMOUNT = 0.1;
 	const MOVE_AMOUNT = 0.1;
 
-	let items: any = {};
+	let items: { [id: string]: ItemProps } = {};
 	for (let i = 0; i < AMOUNT; i++) {
 		items[i] = {
 			id: i.toString(),
-			position: { x: randFloat(-RANGE, RANGE), y: randFloat(-RANGE, RANGE) },
+			position: {
+				x: randFloat(-SPAWN_RANGE, SPAWN_RANGE),
+				y: randFloat(-SPAWN_RANGE, SPAWN_RANGE)
+			},
 			type: ItemType.DEBRIS,
 			cleaned: false
 		};
@@ -104,6 +122,7 @@
 </T.PerspectiveCamera>
 
 <T.DirectionalLight intensity={0.8} position.x={5} position.y={10} />
+<T.DirectionalLight intensity={8} position.x={5} position.y={10} />
 <T.AmbientLight intensity={0.8} />
 
 <Grid
@@ -116,8 +135,6 @@
 	infiniteGrid
 />
 
-<Threlte />
-
 <T.Mesh rotation={-Math.PI} scale={10} position={[0, 0.1, 0]}>
 	<T.PlaneGeometry args={[1, 1]} />
 	<T.MeshStandardMaterial color={1} />
@@ -129,4 +146,8 @@
 
 {#each Object.entries(items) as [id, item]}
 	<Item props={item} />
+{/each}
+
+{#each obstacles as o}
+	<Obstacle props={o} />
 {/each}

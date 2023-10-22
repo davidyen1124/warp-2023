@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Item } from '$lib';
+	import type { ItemProps } from '$lib';
 	import { T } from '@threlte/core';
 	import { ContactShadows, Float, Grid, OrbitControls } from '@threlte/extras';
 
@@ -7,7 +7,7 @@
 	import { randFloat } from 'three/src/math/MathUtils.js';
 	interactivity();
 
-	export let props: Item;
+	export let props: ItemProps;
 </script>
 
 {#if props.cleaned == false}

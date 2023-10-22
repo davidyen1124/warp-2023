@@ -1,4 +1,4 @@
-import type { Item, Player } from '$lib';
+import type { ItemProps, PlayerProps } from '$lib';
 import { Server } from 'socket.io';
 import type { ViteDevServer } from 'vite';
 
@@ -6,8 +6,8 @@ const MAX_PLAYERS = 20;
 const MAX_ITEMS = 5000;
 
 interface ServerState {
-	players: { [id: string]: Player };
-	items: { [id: string]: Item };
+	players: { [id: string]: PlayerProps };
+	items: { [id: string]: ItemProps };
 }
 
 export const webSocketServer = {

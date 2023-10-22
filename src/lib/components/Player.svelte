@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { Player } from '$lib';
-	import { T, useThrelte } from '@threlte/core';
+	import type { PlayerProps } from '$lib';
+	import { T } from '@threlte/core';
 	import CustomRenderer from './CustomRenderer.svelte';
 
-	export let props: Player;
+	export let props: PlayerProps;
 
 	let outlinedMesh: THREE.Mesh;
 </script>
