@@ -1,5 +1,13 @@
 <script lang="ts">
 	import App from '$lib/components/App.svelte';
+
+	import { socket } from '$lib/socket-client';
+	import { onMount } from 'svelte';
+	onMount(() => {
+		socket.on('eventFromServer', (e) => {
+			console.log(e);
+		});
+	});
 </script>
 
 <div>

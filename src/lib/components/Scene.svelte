@@ -6,7 +6,14 @@
 	import { defaultPlayer } from '$lib';
 
 	const handleKeydown = (e: any) => {
-		console.log(e);
+		switch (e.code) {
+			case 'ArrowRight':
+				console.log('RIGHT');
+				break;
+			case 'ArrowLeft':
+				console.log('LEFT');
+				break;
+		}
 	};
 </script>
 
