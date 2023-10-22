@@ -1,4 +1,4 @@
-import { webSocketServer } from '$lib/socket-server';
+import { webSocketServer } from './src/lib/socket-server';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 

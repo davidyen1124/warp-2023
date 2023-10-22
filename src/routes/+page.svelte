@@ -7,10 +7,13 @@
 		socket.on('eventFromServer', (e) => {
 			console.log(e);
 		});
+
+		// socket.emit('eventFromClient', 'hello');
 	});
 </script>
 
 <div>
+	<button on:click={() => socket.emit('client-update', 'hello from button')}>test</button>
 	<App />
 </div>
 
