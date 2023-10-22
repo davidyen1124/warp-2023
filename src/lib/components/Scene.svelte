@@ -17,7 +17,7 @@
 
 	// obstacles
 	const SPAWN_RANGE = 30;
-	const OBSTACLE_AMOUNT = 30;
+	const OBSTACLE_AMOUNT = 15;
 
 	let obstacles: ObstacleProps[] = [];
 	for (let i = 0; i < OBSTACLE_AMOUNT; i++) {
@@ -26,7 +26,7 @@
 				x: randFloat(-SPAWN_RANGE, SPAWN_RANGE),
 				y: randFloat(-SPAWN_RANGE, SPAWN_RANGE)
 			},
-			type: randInt(0, 12)
+			type: randInt(0, 13)
 		});
 	}
 
@@ -122,7 +122,7 @@
 </T.PerspectiveCamera>
 
 <T.DirectionalLight intensity={0.8} position.x={5} position.y={10} />
-<T.DirectionalLight intensity={8} position.x={5} position.y={10} />
+<!-- <T.DirectionalLight intensity={100} position.x={5} position.y={10} /> -->
 <T.AmbientLight intensity={0.8} />
 
 <Grid
@@ -135,10 +135,10 @@
 	infiniteGrid
 />
 
-<T.Mesh rotation={-Math.PI} scale={10} position={[0, 0.1, 0]}>
+<!-- <T.Mesh rotation={[-Math.PI / 2, 0, 0]} scale={300} receiveShadow>
 	<T.PlaneGeometry args={[1, 1]} />
 	<T.MeshStandardMaterial color={1} />
-</T.Mesh>
+</T.Mesh> -->
 
 <ContactShadows scale={10} blur={2} far={2.5} opacity={0.5} />
 
