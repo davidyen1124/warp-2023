@@ -13,9 +13,13 @@
 		PerspectiveCamera,
 		PlaneGeometry
 	} from 'three';
+	import Threlte from './models/threlte.svelte';
 
-	const RANGE = 40;
-	const AMOUNT = 500;
+	const RANGE = 30;
+	const AMOUNT = 1000;
+
+	const ROTATE_AMOUNT = 0.1;
+	const MOVE_AMOUNT = 0.1;
 
 	let items: any = {};
 	for (let i = 0; i < AMOUNT; i++) {
@@ -60,19 +64,19 @@
 		switch (e.code) {
 			case 'KeyD':
 			case 'ArrowRight':
-				player.heading += 0.1;
+				player.heading += ROTATE_AMOUNT;
 				break;
 			case 'KeyA':
 			case 'ArrowLeft':
-				player.heading -= 0.1;
+				player.heading -= ROTATE_AMOUNT;
 				break;
 			case 'KeyW':
 			case 'ArrowUp':
-				move(0.1);
+				move(MOVE_AMOUNT);
 				break;
 			case 'KeyS':
 			case 'ArrowDown':
-				move(-0.1);
+				move(-MOVE_AMOUNT);
 				break;
 			case 'Enter':
 			case 'Space':
@@ -108,14 +112,16 @@
 	sectionColor="#aaa"
 	sectionThickness={0}
 	fadeDistance={25}
-	cellSize={2}
+	cellSize={3}
 	infiniteGrid
 />
 
-<!-- <T.Mesh rotation={[0, Math.PI, 0]} scale={10}>
-	<T.PlaneGeometry />
-	<T.MeshStandardMaterial />
-</T.Mesh> -->
+<Threlte />
+
+<T.Mesh rotation={-Math.PI} scale={10} position={[0, 0.1, 0]}>
+	<T.PlaneGeometry args={[1, 1]} />
+	<T.MeshStandardMaterial color={1} />
+</T.Mesh>
 
 <ContactShadows scale={10} blur={2} far={2.5} opacity={0.5} />
 

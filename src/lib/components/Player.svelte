@@ -1,12 +1,15 @@
 <script lang="ts">
 	import type { Player } from '$lib';
-	import { T } from '@threlte/core';
+	import { T, useThrelte } from '@threlte/core';
+	import CustomRenderer from './CustomRenderer.svelte';
 
 	export let props: Player;
+
+	let outlinedMesh: THREE.Mesh;
 </script>
 
 <T.Group position={[props.position.x, 0.125, props.position.y]} rotation={[0, -props.heading, 0]}>
-	<T.Mesh>
+	<T.Mesh bind:ref={outlinedMesh}>
 		<T.CylinderGeometry args={[1, 1, 0.5]} />
 		<T.MeshStandardMaterial color={[0.1, 0.1, 0.1]} />
 	</T.Mesh>
@@ -19,3 +22,5 @@
 		<T.MeshStandardMaterial color={1} opacity={0.5} transparent />
 	</T.Mesh> -->
 </T.Group>
+
+<CustomRenderer selectedMesh={outlinedMesh} />

@@ -17,7 +17,10 @@ export const webSocketServer = {
 
 		const io = new Server(server.httpServer);
 
-		let serverData: any = {};
+		let serverData: ServerState = {
+			players: {},
+			items: {}
+		};
 
 		io.on('connection', (socket) => {
 			socket.emit('eventFromServer', 'Hello, World 👋');
@@ -39,10 +42,10 @@ export const webSocketServer = {
 			socket.on('eventFromClient', (e) => console.log('from client', e));
 
 			// what to do when client sends us a message titled 'client-update'
-			socket.on('client-update', function (data) {
-				serverData[socket.id] = data;
-				console.log(serverData);
-			});
+			// socket.on('client-update', function (data) {
+			// 	serverData[socket.id] = data;
+			// 	console.log(serverData);
+			// });
 
 			// // every couple milliseconds we send to this client
 			// // the data of everybody else

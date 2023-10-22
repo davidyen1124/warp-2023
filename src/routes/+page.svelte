@@ -13,7 +13,6 @@
 </script>
 
 <div>
-	<button on:click={() => socket.emit('client-update', 'hello from button')}>test</button>
 	<App />
 </div>
 

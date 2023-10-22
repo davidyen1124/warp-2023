@@ -11,7 +11,7 @@
 </script>
 
 {#if props.cleaned == false}
-	<Float floatIntensity={1} rotationIntensity={0.1} rotationSpeed={5}>
+	<Float floatIntensity={1} rotationIntensity={0.1} rotationSpeed={1}>
 		<T.Mesh
 			position={[props.position.x, 0, props.position.y]}
 			on:pointerenter={() => console.log('mouseover')}
