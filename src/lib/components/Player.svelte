@@ -1,8 +1,6 @@
 <script lang="ts">
 	import type { Player } from '$lib';
 	import { T } from '@threlte/core';
-	import { ContactShadows, Float, Grid, OrbitControls } from '@threlte/extras';
-	import { AutoColliders, RigidBody } from '@threlte/rapier';
 
 	export let props: Player;
 </script>
@@ -16,8 +14,8 @@
 		<T.CylinderGeometry args={[0.5, 0.5, 0.1]} />
 		<T.MeshStandardMaterial color={[0.05, 0.05, 0.05]} />
 	</T.Mesh>
-	<T.Mesh position={[0.6, 0, 0]}>
+	<!-- <T.Mesh position={[0.6, 0, 0]}>
 		<T.BoxGeometry args={[1, 0.4, 1]} />
 		<T.MeshStandardMaterial color={1} opacity={0.5} transparent />
-	</T.Mesh>
+	</T.Mesh> -->
 </T.Group>

@@ -21,14 +21,14 @@ export type Player = {
 	id: string;
 	position: Position;
 	heading: number;
-	collected: Item[];
+	collected: Set<string>;
 };
 
 export const defaultPlayer: Player = {
 	id: 'default',
 	position: { x: 0, y: 0 },
 	heading: 0,
-	collected: []
+	collected: new Set()
 };
 
 export type Dustbin = {

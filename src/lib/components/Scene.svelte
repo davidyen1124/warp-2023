@@ -3,6 +3,7 @@
 	import { ContactShadows, Float, Grid, OrbitControls } from '@threlte/extras';
 
 	import Player from './Player.svelte';
+
 	import { ItemType, defaultPlayer } from '$lib';
 	import { randFloat } from 'three/src/math/MathUtils.js';
 	import Item from './Item.svelte';
@@ -16,11 +17,43 @@
 	const RANGE = 40;
 	const AMOUNT = 500;
 
+	let items: any = {};
+	for (let i = 0; i < AMOUNT; i++) {
+		items[i] = {
+			id: i.toString(),
+			position: { x: randFloat(-RANGE, RANGE), y: randFloat(-RANGE, RANGE) },
+			type: ItemType.DEBRIS,
+			cleaned: false
+		};
+	}
+
 	let player = defaultPlayer;
+
+	const dumpDebris = (player: any) => {
+		console.log('called');
+		player.collected.forEach((id: string) => {
+			items[id].position = {
+				x: player.position.x + randFloat(-1, 1) - 2 * Math.cos(player.heading),
+				y: player.position.y + randFloat(-1, 1) - 2 * Math.sin(player.heading)
+			};
+			items[id].cleaned = false;
+		});
+		player.collected = new Set();
+	};
+
+	const dist = (a: any, b: any) => Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
 
 	const move = (d: number) => {
 		player.position.x += d * Math.cos(player.heading);
 		player.position.y += d * Math.sin(player.heading);
+
+		for (let i = 0; i < AMOUNT; i++) {
+			if (dist(player.position, items[i].position) < 1) {
+				items[i].cleaned = true;
+				player.collected.add(items[i].id);
+			}
+		}
+		console.log(player.collected);
 	};
 
 	const handleKeydown = (e: any) => {
@@ -40,6 +73,10 @@
 			case 'KeyS':
 			case 'ArrowDown':
 				move(-0.1);
+				break;
+			case 'Enter':
+			case 'Space':
+				dumpDebris(player);
 				break;
 		}
 	};
@@ -84,13 +121,6 @@
 
 <Player props={player} />
 
-{#each { length: AMOUNT } as _, i}
-	<Item
-		props={{
-			id: i.toString(),
-			position: { x: randFloat(-RANGE, RANGE), y: randFloat(-RANGE, RANGE) },
-			type: ItemType.DEBRIS,
-			cleaned: false
-		}}
-	/>
+{#each Object.entries(items) as [id, item]}
+	<Item props={item} />
 {/each}
