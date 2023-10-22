@@ -143,9 +143,9 @@
 	<OrbitControls
 		enableDamping
 		target={[player.position.x, 0, player.position.y]}
-		enablePan={true}
-		enableZoom={true}
-		enableRotate={true}
+		enablePan={false}
+		enableZoom={false}
+		enableRotate={false}
 	/>
 </T.PerspectiveCamera>
 
