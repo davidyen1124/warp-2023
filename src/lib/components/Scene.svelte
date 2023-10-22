@@ -3,15 +3,43 @@
 	import { ContactShadows, Float, Grid, OrbitControls } from '@threlte/extras';
 
 	import Player from './Player.svelte';
-	import { defaultPlayer } from '$lib';
+	import { ItemType, defaultPlayer } from '$lib';
+	import { randFloat } from 'three/src/math/MathUtils.js';
+	import Item from './Item.svelte';
+	import {
+		MeshStandardMaterial,
+		OrthographicCamera,
+		PerspectiveCamera,
+		PlaneGeometry
+	} from 'three';
+
+	const RANGE = 40;
+	const AMOUNT = 500;
+
+	let player = defaultPlayer;
+
+	const move = (d: number) => {
+		player.position.x += d * Math.cos(player.heading);
+		player.position.y += d * Math.sin(player.heading);
+	};
 
 	const handleKeydown = (e: any) => {
 		switch (e.code) {
+			case 'KeyD':
 			case 'ArrowRight':
-				console.log('RIGHT');
+				player.heading += 0.1;
 				break;
+			case 'KeyA':
 			case 'ArrowLeft':
-				console.log('LEFT');
+				player.heading -= 0.1;
+				break;
+			case 'KeyW':
+			case 'ArrowUp':
+				move(0.1);
+				break;
+			case 'KeyS':
+			case 'ArrowDown':
+				move(-0.1);
 				break;
 		}
 	};
@@ -19,8 +47,19 @@
 
 <svelte:window on:keydown={handleKeydown} />
 
-<T.PerspectiveCamera makeDefault position={[-10, 10, 10]} fov={15}>
-	<OrbitControls autoRotate enableZoom={false} enableDamping autoRotateSpeed={0.5} target.y={1.5} />
+<T.PerspectiveCamera
+	makeDefault
+	position={[player.position.x - 10, 20, player.position.y + 10]}
+	fov={20}
+	zoom={0.4}
+>
+	<OrbitControls
+		enableDamping
+		target={[player.position.x, 0, player.position.y]}
+		enablePan={true}
+		enableZoom={true}
+		enableRotate={true}
+	/>
 </T.PerspectiveCamera>
 
 <T.DirectionalLight intensity={0.8} position.x={5} position.y={10} />
@@ -28,34 +67,30 @@
 
 <Grid
 	position.y={-0.001}
-	cellColor="#ffffff"
-	sectionColor="#ffffff"
+	cellColor="#aaa"
+	sectionColor="#aaa"
 	sectionThickness={0}
 	fadeDistance={25}
 	cellSize={2}
+	infiniteGrid
 />
+
+<!-- <T.Mesh rotation={[0, Math.PI, 0]} scale={10}>
+	<T.PlaneGeometry />
+	<T.MeshStandardMaterial />
+</T.Mesh> -->
 
 <ContactShadows scale={10} blur={2} far={2.5} opacity={0.5} />
 
-<Float floatIntensity={2} floatingRange={[0, 1]}>
-	<T.Mesh position.y={1.2} position.z={-0.75}>
-		<T.BoxGeometry />
-		<T.MeshStandardMaterial color="#0059BA" />
-	</T.Mesh>
-</Float>
+<Player props={player} />
 
-<Float floatIntensity={1} floatingRange={[0, 1]}>
-	<T.Mesh position={[1.2, 1.5, 0.75]} rotation.x={5} rotation.y={71}>
-		<T.TorusKnotGeometry args={[0.5, 0.15, 100, 12, 2, 3]} />
-		<T.MeshStandardMaterial color="#F85122" />
-	</T.Mesh>
-</Float>
-
-<Float floatIntensity={1} floatingRange={[0, 1]}>
-	<T.Mesh position={[-1.4, 1.5, 0.75]} rotation={[-5, 128, 10]}>
-		<T.IcosahedronGeometry />
-		<T.MeshStandardMaterial color="#F8EBCE" />
-	</T.Mesh>
-</Float>
-
-<Player props={defaultPlayer} />
+{#each { length: AMOUNT } as _, i}
+	<Item
+		props={{
+			id: i.toString(),
+			position: { x: randFloat(-RANGE, RANGE), y: randFloat(-RANGE, RANGE) },
+			type: ItemType.DEBRIS,
+			cleaned: false
+		}}
+	/>
+{/each}
