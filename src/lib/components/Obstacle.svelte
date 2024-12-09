@@ -40,7 +40,7 @@
 </script>
 
 <T.Group
-	position={[props.position.x, 0, props.position.y]}
+	position={[props.position.x, 0, props.position.z]}
 	rotation={[0, randInt(0, 2) * Math.PI, 0]}
 >
 	<!-- <svelte:component this={options[type]} /> -->

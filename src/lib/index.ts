@@ -2,7 +2,7 @@
 
 export type Position = {
 	x: number;
-	y: number;
+	z: number;
 };
 
 export enum ItemType {
@@ -48,7 +48,7 @@ export type PlayerProps = {
 
 export const defaultPlayer: PlayerProps = {
 	id: 'default',
-	position: { x: 0, y: 0 },
+	position: { x: 0, z: 0 },
 	heading: 0,
 	collected: new Set()
 };

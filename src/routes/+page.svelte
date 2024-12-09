@@ -13,11 +13,16 @@
 	<br />
 	<p>wasd / arrow keys to navigate</p>
 	<p>SPACE / ENTER to empty dust</p>
+	<p>click anywhere to control camera (ESC to exit)</p>
 </section>
 
 <style>
 	:global(body) {
 		margin: 0;
+		cursor: auto;
+	}
+	:global(body.pointer-locked) {
+		cursor: none;
 	}
 
 	div {

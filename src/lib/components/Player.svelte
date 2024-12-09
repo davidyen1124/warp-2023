@@ -8,7 +8,7 @@
 	let outlinedMesh: THREE.Mesh;
 </script>
 
-<T.Group position={[props.position.x, 0.125, props.position.y]} rotation={[0, -props.heading, 0]}>
+<T.Group position={[props.position.x, 0.125, props.position.z]} rotation={[0, -props.heading, 0]}>
 	<T.Mesh bind:ref={outlinedMesh}>
 		<T.CylinderGeometry args={[1, 1, 0.5]} />
 		<T.MeshStandardMaterial color={[0.1, 0.1, 0.1]} />
