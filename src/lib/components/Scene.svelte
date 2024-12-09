@@ -90,7 +90,6 @@
 	let player = defaultPlayer;
 
 	const dumpDebris = (player: any) => {
-		console.log('called');
 		player.collected.forEach((id: string) => {
 			items[id].position = {
 				x: player.position.x + randFloat(-1, 1) - 2 * Math.cos(player.heading),
