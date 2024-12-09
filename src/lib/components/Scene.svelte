@@ -15,33 +15,10 @@
 	} from 'three';
 	import Obstacle from './Obstacle.svelte';
 
-	import { socket } from '$lib/socket-client';
 	import { onMount } from 'svelte';
 
-	let status: string;
 	let clientData: any = {};
 	let serverData: any = {};
-	onMount(() => {
-		// update status when server tells us whether they approve or reject our request to join a room
-		socket.on('connection-approve', function (data) {
-			status = 'approve';
-			clientData.id = socket.id;
-			console.log('approved');
-		});
-		socket.on('connection-reject', function (data) {
-			status = 'reject';
-			console.log('rejected');
-		});
-
-		// update our copy everytime the server sends us an update
-		socket.on('server-update', function (data) {
-			serverData = data;
-		});
-
-		// socket.on('eventFromServer', (e) => {
-		// 	console.log(e);
-		// });
-	});
 
 	// obstacles
 	const SPAWN_RANGE = 30;
@@ -239,22 +216,6 @@
 		if (canvas) {
 			canvas.addEventListener('click', handleCanvasClick);
 		}
-
-		// Socket event handlers
-		socket.on('connection-approve', function (data) {
-			status = 'approve';
-			clientData.id = socket.id;
-			console.log('approved');
-		});
-		socket.on('connection-reject', function (data) {
-			status = 'reject';
-			console.log('rejected');
-		});
-
-		// update our copy everytime the server sends us an update
-		socket.on('server-update', function (data) {
-			serverData = data;
-		});
 
 		return () => {
 			cancelAnimationFrame(animationFrameId);
