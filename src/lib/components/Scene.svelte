@@ -20,10 +20,24 @@
 	let clientData: any = {};
 	let serverData: any = {};
 
+	let gamepads: Record<number, Gamepad> = {};
+	let lastButtonPressTime = 0;
+	const BUTTON_COOLDOWN = 250; // 250ms cooldown between button presses
+
+	// Called when a gamepad is connected
+	function handleGamepadConnected(e: GamepadEvent) {
+		gamepads[e.gamepad.index] = e.gamepad;
+	}
+
+	// Called when a gamepad is disconnected
+	function handleGamepadDisconnected(e: GamepadEvent) {
+		delete gamepads[e.gamepad.index];
+	}
+
 	// obstacles
 	const SPAWN_RANGE = 30;
 	const OBSTACLE_AMOUNT = 15;
-	const MOUSE_SENSITIVITY = 0.003;
+	const ROTATION_SPEED = 0.003;
 
 	let obstacles: ObstacleProps[] = [];
 	for (let i = 0; i < OBSTACLE_AMOUNT; i++) {
@@ -54,11 +68,17 @@
 		right: false
 	};
 
+	let gamepadInput = {
+		forward: 0, // -1 (back) to +1 (forward)
+		strafe: 0, // -1 (left) to +1 (right)
+		rotate: 0 // -1 (left) to +1 (right) for camera rotation
+	};
+
 	let isPointerLocked = false;
 
 	const handleMouseMove = (e: MouseEvent) => {
 		if (isPointerLocked) {
-			player.heading -= e.movementX * MOUSE_SENSITIVITY;
+			player.heading -= e.movementX * ROTATION_SPEED;
 		}
 	};
 
@@ -149,6 +169,33 @@
 	};
 
 	const updateMovement = () => {
+		// Poll gamepads for input
+		const connectedGamepads = navigator.getGamepads();
+		for (let i = 0; i < connectedGamepads.length; i++) {
+			const gp = connectedGamepads[i];
+			if (!gp) continue; // skip empty slots
+
+			// Left stick for movement
+			const axisLeftRight = gp.axes[0]; // Left stick X
+			const axisUpDown = gp.axes[1]; // Left stick Y
+			const axisRightX = gp.axes[2]; // Right stick X
+
+			// Apply deadzone to prevent drift
+			const DEADZONE = 0.1;
+
+			// Update gamepad input state with deadzoned values
+			gamepadInput.forward = Math.abs(axisUpDown) > DEADZONE ? -axisUpDown : 0;
+			gamepadInput.strafe = Math.abs(axisLeftRight) > DEADZONE ? axisLeftRight : 0;
+			gamepadInput.rotate = Math.abs(axisRightX) > DEADZONE ? axisRightX : 0;
+
+			// A button (index 0) for dumping debris with cooldown
+			const currentTime = performance.now();
+			if (gp.buttons[0].pressed && currentTime - lastButtonPressTime > BUTTON_COOLDOWN) {
+				dumpDebris(player);
+				lastButtonPressTime = currentTime;
+			}
+		}
+
 		// Direction vectors: heading=0 means facing -Z.
 		const forwardX = -Math.sin(player.heading);
 		const forwardZ = -Math.cos(player.heading);
@@ -156,11 +203,17 @@
 		const rightX = Math.cos(player.heading);
 		const rightZ = -Math.sin(player.heading);
 
-		// Compute acceleration based on keys
+		// Compute acceleration based on both keyboard and gamepad
 		let ax = 0;
 		let az = 0;
 
-		// Forward/backward
+		// Gamepad analog movement
+		ax += forwardX * (gamepadInput.forward * ACCELERATION);
+		az += forwardZ * (gamepadInput.forward * ACCELERATION);
+		ax += rightX * (gamepadInput.strafe * ACCELERATION);
+		az += rightZ * (gamepadInput.strafe * ACCELERATION);
+
+		// Keyboard digital movement
 		if (keysPressed.up) {
 			ax += forwardX * ACCELERATION;
 			az += forwardZ * ACCELERATION;
@@ -179,6 +232,9 @@
 			ax += rightX * ACCELERATION;
 			az += rightZ * ACCELERATION;
 		}
+
+		// Apply gamepad rotation
+		player.heading -= gamepadInput.rotate * ROTATION_SPEED * 10;
 
 		// Update velocity with acceleration
 		velocity.x += ax;
@@ -206,6 +262,10 @@
 		// Start the movement update loop
 		let animationFrameId = requestAnimationFrame(updateMovement);
 
+		// Add gamepad event listeners
+		window.addEventListener('gamepadconnected', handleGamepadConnected);
+		window.addEventListener('gamepaddisconnected', handleGamepadDisconnected);
+
 		// Add pointer lock event listeners
 		document.addEventListener('pointerlockchange', handlePointerLockChange);
 		document.addEventListener('mozpointerlockchange', handlePointerLockChange);
@@ -218,6 +278,8 @@
 
 		return () => {
 			cancelAnimationFrame(animationFrameId);
+			window.removeEventListener('gamepadconnected', handleGamepadConnected);
+			window.removeEventListener('gamepaddisconnected', handleGamepadDisconnected);
 			document.removeEventListener('mousemove', handleMouseMove);
 			document.removeEventListener('pointerlockchange', handlePointerLockChange);
 			document.removeEventListener('mozpointerlockchange', handlePointerLockChange);
